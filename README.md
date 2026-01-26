@@ -9,7 +9,8 @@ Many more examples found at: https://github.com/github/awesome-copilot
 NOTES:
 - custom instructions are taken by default or path based
 - custom prompts can be played (button) or in chat using / commands
-
+- custom agents can be used in chat
+- custom skills (only available in VS Code Insiders? check https://docs.github.com/en/copilot/concepts/agents/about-agent-skills)
 
 # About
 
