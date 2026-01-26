@@ -1,0 +1,54 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Football Match Results";
+}
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h1 class="display-4">⚽ Football Match Results</h1>
+        <p class="lead">Latest game scores from around the world</p>
+    </div>
+
+    <div class="row">
+        @foreach (var match in Model.Matches)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <strong>@match.Competition</strong>
+                        <span class="float-end">@match.MatchDate.ToString("MMM dd, yyyy HH:mm")</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-5 text-end">
+                                <h4>@match.HomeTeam</h4>
+                            </div>
+                            <div class="col-2 text-center">
+                                <h2 class="mb-0">
+                                    <span class="badge @(match.HomeScore > match.AwayScore ? "bg-success" : match.HomeScore < match.AwayScore ? "bg-danger" : "bg-secondary")">
+                                        @match.HomeScore
+                                    </span>
+                                    -
+                                    <span class="badge @(match.AwayScore > match.HomeScore ? "bg-success" : match.AwayScore < match.HomeScore ? "bg-danger" : "bg-secondary")">
+                                        @match.AwayScore
+                                    </span>
+                                </h2>
+                            </div>
+                            <div class="col-5 text-start">
+                                <h4>@match.AwayTeam</h4>
+                            </div>
+                        </div>
+                        @if (match.HomeScore == match.AwayScore)
+                        {
+                            <div class="text-center mt-2">
+                                <span class="badge bg-warning text-dark">Draw</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
