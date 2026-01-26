@@ -6,6 +6,10 @@ GitHub repo used for demoing many GH courses.
 
 Many more examples found at: https://github.com/github/awesome-copilot
 
+NOTES:
+- custom instructions are taken by default or path based
+- custom prompts can be played (button) or in chat using / commands
+
 
 # About
 
