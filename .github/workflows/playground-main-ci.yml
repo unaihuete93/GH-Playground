@@ -1,0 +1,247 @@
+# written by Copilot - Custom instructions applied
+name: Football Results Web - CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: # Allow manual trigger
+
+# Security: Use least privilege for GITHUB_TOKEN
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+  security-events: write
+
+# Prevent concurrent runs on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.build-info.outputs.artifact-name }}
+      version: ${{ steps.build-info.outputs.version }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history for better analysis
+          fetch-depth: 0
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          # Enable global.json file if present
+          global-json-file: global.json
+          
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      
+      - name: Restore dependencies
+        run: dotnet restore src/FootballResultsWeb.csproj
+        
+      - name: Build application
+        run: dotnet build src/FootballResultsWeb.csproj --configuration Release --no-restore --verbosity normal
+        
+      - name: Set build info
+        id: build-info
+        run: |
+          echo "artifact-name=football-results-web-${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          echo "version=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+      
+      # Note: No explicit tests found in the project structure, but leaving test step for future use
+      - name: Run tests
+        run: |
+          if [ -d "tests" ] || find . -name "*.Tests.csproj" -o -name "*Test*.csproj" | grep -q .; then
+            echo "Running tests..."
+            dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+          else
+            echo "No test projects found. Skipping test execution."
+          fi
+        
+      - name: Publish application
+        run: dotnet publish src/FootballResultsWeb.csproj --configuration Release --output ./publish --no-build
+        
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.build-info.outputs.artifact-name }}
+          path: ./publish
+          retention-days: 30
+          
+      - name: Upload test coverage (if exists)
+        if: hashFiles('coverage/**/*.xml') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage-${{ github.sha }}
+          path: ./coverage
+          retention-days: 30
+
+  security-scan:
+    name: Security Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          
+      - name: Restore dependencies for security analysis
+        run: dotnet restore src/FootballResultsWeb.csproj
+        
+      # Dependency vulnerability scanning
+      - name: Run dependency check
+        uses: dependency-check/Dependency-Check_Action@main
+        id: dependency-check
+        with:
+          project: 'FootballResultsWeb'
+          path: './src'
+          format: 'SARIF'
+          args: >
+            --enableRetired
+            --enableExperimental
+            --disableNodeAudit
+            --disableNodeAuditCache
+        continue-on-error: true
+        
+      - name: Upload dependency check results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/dependency-check-report.sarif
+          category: dependency-check
+          
+      # CodeQL Analysis for .NET
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+          queries: security-extended,security-and-quality
+          
+      - name: Build for CodeQL
+        run: dotnet build src/FootballResultsWeb.csproj --configuration Release
+        
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: codeql-csharp
+
+  lint-and-format:
+    name: Code Quality & Formatting
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          
+      - name: Install dotnet format tool
+        run: dotnet tool install -g dotnet-format
+        
+      - name: Check code formatting
+        run: dotnet format src/FootballResultsWeb.csproj --verify-no-changes --verbosity diagnostic
+        
+      - name: Analyze code style
+        run: dotnet build src/FootballResultsWeb.csproj --configuration Release --verbosity normal
+
+  validate-deployment:
+    name: Validate Deployment Readiness
+    runs-on: ubuntu-latest
+    needs: [build-and-test, security-scan, lint-and-format]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-and-test.outputs.artifact-name }}
+          path: ./publish
+          
+      - name: Verify published files
+        run: |
+          echo "Checking published application structure..."
+          ls -la ./publish
+          
+          # Verify essential files exist
+          if [ ! -f "./publish/FootballResultsWeb.dll" ]; then
+            echo "❌ Main application DLL not found"
+            exit 1
+          fi
+          
+          if [ ! -f "./publish/appsettings.json" ]; then
+            echo "❌ Configuration file not found"
+            exit 1
+          fi
+          
+          echo "✅ Published application structure is valid"
+          
+      - name: Security check on published artifacts
+        run: |
+          echo "Performing basic security checks on published files..."
+          
+          # Check for any sensitive files that shouldn't be published
+          if find ./publish -name "*.pdb" | grep -q .; then
+            echo "⚠️ Warning: Debug symbols found in published artifacts"
+          fi
+          
+          # Check for development configuration
+          if [ -f "./publish/appsettings.Development.json" ]; then
+            echo "⚠️ Warning: Development settings found in published artifacts"
+          fi
+          
+          echo "✅ Security check completed"
+
+  # Summary job that depends on all others
+  ci-summary:
+    name: CI Pipeline Summary
+    runs-on: ubuntu-latest
+    needs: [build-and-test, security-scan, lint-and-format]
+    if: always()
+    
+    steps:
+      - name: Check job results
+        run: |
+          echo "## CI Pipeline Results 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Build and Test | ${{ needs.build-and-test.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Scan | ${{ needs.security-scan.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Code Quality | ${{ needs.lint-and-format.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.build-and-test.result }}" == "success" && "${{ needs.security-scan.result }}" == "success" && "${{ needs.lint-and-format.result }}" == "success" ]]; then
+            echo "🎉 All checks passed! The application is ready for deployment." >> $GITHUB_STEP_SUMMARY
+            echo "✅ Pipeline completed successfully"
+          else
+            echo "❌ Some checks failed. Please review the results above." >> $GITHUB_STEP_SUMMARY
+            echo "❌ Pipeline failed"
+            exit 1
+          fi
