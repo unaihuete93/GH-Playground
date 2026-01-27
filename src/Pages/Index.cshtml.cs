@@ -66,6 +66,60 @@ public class IndexModel : PageModel
                 AwayScore = 3,
                 MatchDate = DateTime.Now.AddHours(-6),
                 Competition = "Premier League"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Inter Milan",
+                AwayTeam = "Napoli",
+                HomeScore = 1,
+                AwayScore = 1,
+                MatchDate = DateTime.Now.AddDays(-5),
+                Competition = "Serie A"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Atletico Madrid",
+                AwayTeam = "Sevilla",
+                HomeScore = 2,
+                AwayScore = 0,
+                MatchDate = DateTime.Now.AddDays(-3),
+                Competition = "La Liga"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Tottenham Hotspur",
+                AwayTeam = "Manchester City",
+                HomeScore = 1,
+                AwayScore = 4,
+                MatchDate = DateTime.Now.AddHours(-12),
+                Competition = "Premier League"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "RB Leipzig",
+                AwayTeam = "Bayer Leverkusen",
+                HomeScore = 3,
+                AwayScore = 2,
+                MatchDate = DateTime.Now.AddDays(-2),
+                Competition = "Bundesliga"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Lyon",
+                AwayTeam = "Monaco",
+                HomeScore = 2,
+                AwayScore = 1,
+                MatchDate = DateTime.Now.AddDays(-6),
+                Competition = "Ligue 1"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Porto",
+                AwayTeam = "Benfica",
+                HomeScore = 0,
+                AwayScore = 2,
+                MatchDate = DateTime.Now.AddDays(-1),
+                Competition = "Primeira Liga"
             }
         };
     }
