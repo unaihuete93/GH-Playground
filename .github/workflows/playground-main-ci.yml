@@ -112,7 +112,7 @@ jobs:
         
       # Dependency vulnerability scanning
       - name: Run dependency check
-        uses: dependency-check/Dependency-Check_Action@v4
+        uses: dependency-check/Dependency-Check_Action@main
         id: dependency-check
         with:
           project: 'FootballResultsWeb'
