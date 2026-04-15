@@ -23,3 +23,9 @@
 - Avoid suggesting code that has been deleted or is not relevant to the current file
 - ALWAYS make sure the proposed is compiling "dotnet build" without errors before suggesting it.
 - ALWAYS make sure you include unit tests for the proposed code and that they are passing before suggesting it.
+
+## Custom Skills 
+- Follow the instructions at https://code.visualstudio.com/docs/copilot/customization/agent-skills to create custom skills for this project.
+
+## Custom Agents
+- Follow the instructions at https://code.visualstudio.com/docs/copilot/customization/custom-agents to create custom agents for this project.
