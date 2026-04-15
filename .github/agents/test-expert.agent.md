@@ -3,7 +3,7 @@ name: test-expert
 description: "Use when you need test strategy, test implementation, execution, and validation of recent code changes."
 tools: [read, search, edit, execute]
 agents: []
-user-invocable: false
+user-invocable: true
 disable-model-invocation: false
 ---
 You are test-expert. Your role is to validate the implemented changes.

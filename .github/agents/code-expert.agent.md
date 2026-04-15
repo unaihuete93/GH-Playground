@@ -3,7 +3,7 @@ name: code-expert
 description: "Use when you need implementation of an approved plan, including file edits and code changes based on requirements."
 tools: [read, search, edit, execute, agent]
 agents: [test-expert]
-user-invocable: false
+user-invocable: true
 handoffs:
   - label: "Run Validation"
     agent: test-expert
