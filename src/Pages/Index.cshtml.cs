@@ -120,6 +120,51 @@ public class IndexModel : PageModel
                 AwayScore = 2,
                 MatchDate = DateTime.Now.AddDays(-1),
                 Competition = "Primeira Liga"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Ajax",
+                AwayTeam = "PSV Eindhoven",
+                HomeScore = 2,
+                AwayScore = 2,
+                MatchDate = DateTime.Now.AddDays(-4),
+                Competition = "Eredivisie"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Celtic",
+                AwayTeam = "Rangers",
+                HomeScore = 3,
+                AwayScore = 1,
+                MatchDate = DateTime.Now.AddDays(-2),
+                Competition = "Scottish Premiership"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Sporting CP",
+                AwayTeam = "Braga",
+                HomeScore = 4,
+                AwayScore = 0,
+                MatchDate = DateTime.Now.AddDays(-3),
+                Competition = "Primeira Liga"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Real Betis",
+                AwayTeam = "Valencia",
+                HomeScore = 1,
+                AwayScore = 3,
+                MatchDate = DateTime.Now.AddDays(-5),
+                Competition = "La Liga"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Galatasaray",
+                AwayTeam = "Fenerbahce",
+                HomeScore = 2,
+                AwayScore = 1,
+                MatchDate = DateTime.Now.AddDays(-1),
+                Competition = "Super Lig"
             }
         };
     }
