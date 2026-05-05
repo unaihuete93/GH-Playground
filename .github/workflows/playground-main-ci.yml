@@ -11,9 +11,6 @@ on:
 # Security: Use least privilege for GITHUB_TOKEN
 permissions:
   contents: read
-  pull-requests: write
-  checks: write
-  security-events: write
 
 # Prevent concurrent runs on the same branch
 concurrency:
@@ -31,16 +28,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          # Fetch full history for better analysis
-          fetch-depth: 0
       
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-          # Enable global.json file if present
-          global-json-file: global.json
           
       - name: Cache NuGet packages
         uses: actions/cache@v4
@@ -51,10 +43,10 @@ jobs:
             ${{ runner.os }}-nuget-
       
       - name: Restore dependencies
-        run: dotnet restore src/FootballResultsWeb.csproj
+        run: dotnet restore GH-Playground.sln
         
       - name: Build application
-        run: dotnet build src/FootballResultsWeb.csproj --configuration Release --no-restore --verbosity normal
+        run: dotnet build GH-Playground.sln --configuration Release --no-restore --verbosity normal
         
       - name: Set build info
         id: build-info
@@ -67,7 +59,7 @@ jobs:
         run: |
           if [ -d "tests" ] || find . -name "*.Tests.csproj" -o -name "*Test*.csproj" | grep -q .; then
             echo "Running tests..."
-            dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+            dotnet test GH-Playground.sln --configuration Release --no-build --no-restore --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
           else
             echo "No test projects found. Skipping test execution."
           fi
@@ -101,8 +93,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
           
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -114,7 +104,7 @@ jobs:
         
       # Dependency vulnerability scanning
       - name: Run dependency check
-        uses: dependency-check/Dependency-Check_Action@main
+        uses: dependency-check/Dependency-Check_Action@75ba02d6183445fe0761d26e836bde58b1560600
         id: dependency-check
         with:
           project: 'FootballResultsWeb'
@@ -125,10 +115,9 @@ jobs:
             --enableExperimental
             --disableNodeAudit
             --disableNodeAuditCache
-        continue-on-error: true
         
       - name: Upload dependency check results
-        if: always()
+        if: always() && hashFiles('reports/dependency-check-report.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: reports/dependency-check-report.sarif
