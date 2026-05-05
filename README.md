@@ -11,6 +11,7 @@ NOTES:
 - custom prompts can be played (button) or in chat using / commands
 - custom agents can be used in chat
 - custom skills (only available in VS Code Insiders? check https://docs.github.com/en/copilot/concepts/agents/about-agent-skills)
+- demo skill added at .github/skills/docs-page-writer/SKILL.md to create docs pages in the docs folder
 
 # About
 
