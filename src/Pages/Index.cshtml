@@ -4,52 +4,67 @@
     ViewData["Title"] = "Football Match Results";
 }
 
-
-<div class="container mt-4">
-    <div class="text-center mb-4">
-        <h1 class="display-4">⚽ Football Match Results</h1>
-        <p class="lead">Latest game scores from around the world</p>
+<section class="hero" aria-labelledby="hero-title">
+    <div class="container">
+        <div class="hero__badge">⚽ Live Results</div>
+        <h1 id="hero-title" class="hero__title">Football Match Results</h1>
+        <p class="hero__subtitle">Latest scores from the top leagues around the world</p>
     </div>
+</section>
 
-    <div class="row">
-        @foreach (var match in Model.Matches)
-        {
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <strong>@match.Competition</strong>
-                        <span class="float-end">@match.MatchDate.ToString("MMM dd, yyyy HH:mm")</span>
+<section class="results-section" aria-label="Match results">
+    <div class="container">
+        <div class="results-grid">
+            @foreach (var match in Model.Matches)
+            {
+                var homeClass = IndexModel.GetHomeOutcomeClass(match);
+                var awayClass = IndexModel.GetAwayOutcomeClass(match);
+                var homeLabel = IndexModel.GetHomeOutcomeLabel(match);
+                var awayLabel = IndexModel.GetAwayOutcomeLabel(match);
+                var isDraw = match.HomeScore == match.AwayScore;
+                var outcomeLabel = IndexModel.GetMatchOutcomeLabel(match);
+
+                <article class="match-card" aria-label="@match.HomeTeam vs @match.AwayTeam — @outcomeLabel">
+                    <div class="match-card__header">
+                        <span class="match-card__competition">@match.Competition</span>
+                        <time class="match-card__date" datetime="@match.MatchDate.ToString("yyyy-MM-ddTHH:mm")">
+                            @match.MatchDate.ToString("MMM dd, HH:mm")
+                        </time>
                     </div>
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-5 text-end">
-                                <h4>@match.HomeTeam</h4>
+                    <div class="match-card__body">
+                        <div class="match-score">
+                            <div class="match-score__team match-score__team--home">
+                                <span>@match.HomeTeam</span>
                             </div>
-                            <div class="col-2 text-center">
-                                <h2 class="mb-0">
-                                    <span class="badge @(match.HomeScore > match.AwayScore ? "bg-success" : match.HomeScore < match.AwayScore ? "bg-danger" : "bg-secondary")">
-                                        @match.HomeScore
-                                    </span>
-                                    -
-                                    <span class="badge @(match.AwayScore > match.HomeScore ? "bg-success" : match.AwayScore < match.HomeScore ? "bg-danger" : "bg-secondary")">
-                                        @match.AwayScore
-                                    </span>
-                                </h2>
+                            <div class="match-score__display" aria-label="Score @match.HomeScore - @match.AwayScore">
+                                <div class="score-badge @homeClass" aria-hidden="true">
+                                    <span>@match.HomeScore</span>
+                                    <span class="score-badge__outcome">@homeLabel</span>
+                                </div>
+                                <span class="match-score__separator" aria-hidden="true">–</span>
+                                <div class="score-badge @awayClass" aria-hidden="true">
+                                    <span>@match.AwayScore</span>
+                                    <span class="score-badge__outcome">@awayLabel</span>
+                                </div>
                             </div>
-                            <div class="col-5 text-start">
-                                <h4>@match.AwayTeam</h4>
+                            <div class="match-score__team match-score__team--away">
+                                <span>@match.AwayTeam</span>
                             </div>
                         </div>
-                        @if (match.HomeScore == match.AwayScore)
-                        {
-                            <div class="text-center mt-2">
-                                <span class="badge bg-warning text-dark">Draw</span>
-                            </div>
-                        }
+                        <div class="match-outcome">
+                            @if (isDraw)
+                            {
+                                <span class="outcome-badge outcome-badge--draw" role="status">⬤ Draw</span>
+                            }
+                            else
+                            {
+                                <span class="outcome-badge outcome-badge--win" role="status">🏆 @outcomeLabel</span>
+                            }
+                        </div>
                     </div>
-                </div>
-            </div>
-        }
+                </article>
+            }
+        </div>
     </div>
-</div>
+</section>
 

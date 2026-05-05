@@ -8,6 +8,36 @@ public class IndexModel : PageModel
 {
     public List<FootballMatch> Matches { get; set; } = new();
 
+    // written by Copilot
+    /// <summary>Returns the CSS outcome class for the home team score badge.</summary>
+    public static string GetHomeOutcomeClass(FootballMatch match) =>
+        match.HomeScore > match.AwayScore ? "score--win" :
+        match.HomeScore < match.AwayScore ? "score--loss" : "score--draw";
+
+    // written by Copilot
+    /// <summary>Returns the CSS outcome class for the away team score badge.</summary>
+    public static string GetAwayOutcomeClass(FootballMatch match) =>
+        match.AwayScore > match.HomeScore ? "score--win" :
+        match.AwayScore < match.HomeScore ? "score--loss" : "score--draw";
+
+    // written by Copilot
+    /// <summary>Returns a human-readable outcome label for a match (Win / Draw).</summary>
+    public static string GetMatchOutcomeLabel(FootballMatch match) =>
+        match.HomeScore == match.AwayScore ? "Draw" :
+        match.HomeScore > match.AwayScore ? $"{match.HomeTeam} Win" : $"{match.AwayTeam} Win";
+
+    // written by Copilot
+    /// <summary>Returns the short outcome label for the home team perspective.</summary>
+    public static string GetHomeOutcomeLabel(FootballMatch match) =>
+        match.HomeScore > match.AwayScore ? "W" :
+        match.HomeScore < match.AwayScore ? "L" : "D";
+
+    // written by Copilot
+    /// <summary>Returns the short outcome label for the away team perspective.</summary>
+    public static string GetAwayOutcomeLabel(FootballMatch match) =>
+        match.AwayScore > match.HomeScore ? "W" :
+        match.AwayScore < match.HomeScore ? "L" : "D";
+
     public void OnGet()
     {
         // Generate fake football match results
