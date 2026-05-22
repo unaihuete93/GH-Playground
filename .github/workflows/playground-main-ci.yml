@@ -118,14 +118,14 @@ jobs:
         
       - name: Upload dependency check results
         if: always() && hashFiles('reports/dependency-check-report.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: reports/dependency-check-report.sarif
           category: dependency-check
           
       # CodeQL Analysis for .NET
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: csharp
           queries: security-extended,security-and-quality
@@ -134,7 +134,7 @@ jobs:
         run: dotnet build src/FootballResultsWeb.csproj --configuration Release
         
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         with:
           category: codeql-csharp
 
