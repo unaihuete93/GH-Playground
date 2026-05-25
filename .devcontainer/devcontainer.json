@@ -30,6 +30,11 @@
 				"github.vscode-github-actions",
 				"ms-azuretools.vscode-containers"
 			]
+		},
+		"codespaces": {
+			"permissions": {
+				"security_events": "write"
+			}
 		}
 	}
 

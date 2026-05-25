@@ -1,0 +1,13 @@
+---
+sourceLocationPrefix: /workspaces/GH-Playground
+baselineLinesOfCode: 291
+unicodeNewlines: false
+columnKind: utf16
+primaryLanguage: csharp
+creationMetadata:
+  sha: bef6eff332fc5d013448cf2f22b0be433f68fd23
+  cliVersion: 2.25.5
+  creationTime: 2026-05-25T14:49:23.571095321Z
+overlayBaseDatabase: false
+overlayDatabase: false
+finalised: true
