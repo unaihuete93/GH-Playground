@@ -2,7 +2,7 @@
 
 ## Overview
 
-This folder contains custom QL queries for analyzing the `FootballResultsWeb` C# project locally using the CodeQL CLI (`gh codeql`). The queries target intentional vulnerabilities in `src/Controllers/DemoVulnerableController.cs`.
+This folder contains custom QL queries for analyzing the `FootballResultsWeb` C# project locally. The queries target intentional vulnerabilities in `src/Controllers/DemoVulnerableController.cs`.
 
 ## Audience
 
@@ -11,11 +11,20 @@ This folder contains custom QL queries for analyzing the `FootballResultsWeb` C#
 
 ## Prerequisites
 
-- GitHub CLI (`gh`) with the `gh-codeql` extension installed and on `PATH`
 - .NET SDK 10 or later
 - Workspace cloned at `/workspaces/GH-Playground`
+- One of the following CodeQL CLIs:
+  - Standalone `codeql` binary on `PATH`
+  - GitHub CLI (`gh`) with the `gh-codeql` extension
 
-Verify the toolchain:
+Verify the toolchain (standalone CLI):
+
+```bash
+codeql version
+codeql resolve languages | grep csharp
+```
+
+Verify the toolchain (`gh` wrapper):
 
 ```bash
 gh codeql version
@@ -37,6 +46,15 @@ gh codeql resolve languages | grep csharp
 Run from the workspace root:
 
 ```bash
+codeql database create codeql-db \
+  --language=csharp \
+  --command="dotnet build src/FootballResultsWeb.csproj" \
+  --overwrite
+```
+
+Equivalent with `gh`:
+
+```bash
 gh codeql database create codeql-db \
   --language=csharp \
   --command="dotnet build src/FootballResultsWeb.csproj" \
@@ -46,19 +64,55 @@ gh codeql database create codeql-db \
 ### 2. Install pack dependencies
 
 ```bash
-gh codeql pack download codeql/csharp-all
+codeql pack install --dir codeql-queries
 ```
 
-### 3. Run all queries — SARIF output
+Equivalent with `gh`:
 
 ```bash
-gh codeql database analyze codeql-db \
+gh codeql pack install --dir codeql-queries
+```
+
+### 3. Run custom queries only — SARIF output
+
+```bash
+codeql database analyze codeql-db \
   codeql-queries/ \
   --format=sarif-latest \
   --output=results.sarif
 ```
 
-### 4. Run a single query — terminal output
+### 4. Run standard C# queries + custom queries — SARIF output
+
+```bash
+codeql database analyze codeql-db \
+  codeql/csharp-queries \
+  codeql-queries/ \
+  --format=sarif-latest \
+  --output=results.sarif
+```
+
+Equivalent with `gh`:
+
+```bash
+gh codeql database analyze codeql-db \
+  codeql/csharp-queries \
+  codeql-queries/ \
+  --format=sarif-latest \
+  --output=results.sarif
+```
+
+### 5. Run a single query — terminal output
+
+```bash
+codeql query run codeql-queries/WeakHash.ql \
+  --database=codeql-db \
+  --output=weak-hash.bqrs
+
+codeql bqrs decode weak-hash.bqrs --format=text
+```
+
+Equivalent with `gh`:
 
 ```bash
 gh codeql query run codeql-queries/WeakHash.ql \
@@ -68,7 +122,7 @@ gh codeql query run codeql-queries/WeakHash.ql \
 gh codeql bqrs decode weak-hash.bqrs --format=text
 ```
 
-### 5. Upload SARIF results to GitHub
+### 6. Upload SARIF results to GitHub
 
 Upload the results to GitHub Code Scanning so findings appear in the **Security** tab of the repository.
 
@@ -110,5 +164,11 @@ Expected:
 ## Troubleshooting
 
 - **Build fails during database create** — confirm `dotnet build src/FootballResultsWeb.csproj` succeeds on its own first.
-- **Cannot resolve pack `codeql/csharp-all`** — run `gh codeql pack download codeql/csharp-all` then retry.
+- **`Could not resolve library path for .../codeql-queries`** — install pack dependencies first:
+  - `codeql pack install --dir codeql-queries`
+  - or `gh codeql pack install --dir codeql-queries`
+- **`Pack 'codeql/csharp-all' was not found in the pack download cache`** — same fix as above (`pack install --dir codeql-queries`).
+- **`codeql: command not found`** — start a new shell session or run `source ~/.bashrc` so the updated `PATH` is loaded.
+- **`cache directory is already locked` / `.lock` error** — another CodeQL process is using the same database. Wait for the running analysis to finish, then retry.
+- **Only custom queries appear in SARIF** — include `codeql/csharp-queries` explicitly in the analyze command to run standard C# queries too.
 - **Query returns zero results** — inspect the compiled types with a simpler query or run the standard `codeql/csharp-queries` pack to confirm the database is valid.

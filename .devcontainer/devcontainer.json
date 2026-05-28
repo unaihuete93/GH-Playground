@@ -21,11 +21,12 @@
 	// }
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "dotnet restore",
+	"postCreateCommand": "bash -lc 'set -euo pipefail; INSTALL_DIR=\"$HOME/.local/codeql\"; TMP_DIR=\"$(mktemp -d)\"; cd \"$TMP_DIR\"; RELEASE_JSON=\"$(curl -fsSL https://api.github.com/repos/github/codeql-cli-binaries/releases/latest)\"; ASSET_URL=\"$(printf %s \"$RELEASE_JSON\" | grep -oE \"https://[^\\\" ]*codeql-linux64\\\\.zip\" | head -n1)\"; if [[ -z \"$ASSET_URL\" ]]; then echo \"Failed to locate CodeQL Linux asset URL\" >&2; exit 1; fi; curl -fL \"$ASSET_URL\" -o codeql-linux64.zip; rm -rf \"$INSTALL_DIR\"; mkdir -p \"$INSTALL_DIR\"; unzip -q codeql-linux64.zip -d \"$INSTALL_DIR\"; if ! grep -q \"export PATH=\\\"$HOME/.local/codeql/codeql:$PATH\\\"\" \"$HOME/.bashrc\"; then echo \"\" >> \"$HOME/.bashrc\"; echo \"# Added by devcontainer: CodeQL CLI\" >> \"$HOME/.bashrc\"; echo \"export PATH=\\\"$HOME/.local/codeql/codeql:$PATH\\\"\" >> \"$HOME/.bashrc\"; fi; dotnet restore; rm -rf \"$TMP_DIR\"'",
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"GitHub.copilot",
+				"GitHub.vscode-codeql",
 				"ms-dotnettools.csdevkit",
 				"github.vscode-github-actions",
 				"ms-azuretools.vscode-containers"
