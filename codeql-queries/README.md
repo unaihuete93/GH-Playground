@@ -64,19 +64,19 @@ gh codeql database create codeql-db \
 ### 2. Install pack dependencies
 
 ```bash
-codeql pack install --dir codeql-queries
+codeql pack install  codeql-queries
 ```
 
 Equivalent with `gh`:
 
 ```bash
-gh codeql pack install --dir codeql-queries
+gh codeql pack install  codeql-queries
 ```
 
 ### 3. Run custom queries only — SARIF output
 
 ```bash
-codeql database analyze codeql-db \
+gh codeql database analyze codeql-db \
   codeql-queries/ \
   --format=sarif-latest \
   --output=results.sarif
