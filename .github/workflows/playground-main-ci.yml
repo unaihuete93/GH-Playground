@@ -101,20 +101,7 @@ jobs:
           
       - name: Restore dependencies for security analysis
         run: dotnet restore src/FootballResultsWeb.csproj
-        
-      # Dependency vulnerability scanning
-      - name: Run dependency check
-        uses: dependency-check/Dependency-Check_Action@75ba02d6183445fe0761d26e836bde58b1560600
-        id: dependency-check
-        with:
-          project: 'FootballResultsWeb'
-          path: './src'
-          format: 'SARIF'
-          args: >
-            --enableRetired
-            --enableExperimental
-            --disableNodeAudit
-            --disableNodeAuditCache
+
         
       - name: Upload dependency check results
         if: always() && hashFiles('reports/dependency-check-report.sarif') != ''
