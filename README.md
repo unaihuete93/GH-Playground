@@ -1,4 +1,4 @@
-# GH-Playground ⚽ TEST 1
+# GH-Playground ⚽
 
 GitHub repo used for demoing many GH courses.
 
