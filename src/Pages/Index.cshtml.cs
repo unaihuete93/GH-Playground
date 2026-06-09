@@ -123,6 +123,24 @@ public class IndexModel : PageModel
                 AwayScore = 2,
                 MatchDate = DateTime.Now.AddDays(-1),
                 Competition = "Primeira Liga"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Celtic",
+                AwayTeam = "Rangers",
+                HomeScore = 2,
+                AwayScore = 1,
+                MatchDate = DateTime.Now.AddDays(-2),
+                Competition = "Scottish Premiership"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Ajax",
+                AwayTeam = "PSV Eindhoven",
+                HomeScore = 1,
+                AwayScore = 1,
+                MatchDate = DateTime.Now.AddDays(-3),
+                Competition = "Eredivisie"
             }
         };
     }
