@@ -33,7 +33,7 @@ public class IndexModelTests
         pageModel.OnGet();
 
         // Assert
-        Assert.Equal(12, pageModel.Matches.Count);
+        Assert.Equal(17, pageModel.Matches.Count);
     }
 
     [Fact]
