@@ -19,3 +19,8 @@
 
 ## Custom Agents
 - Follow the instructions at https://code.visualstudio.com/docs/copilot/customization/custom-agents to create custom agents for this project.
+
+## When code gets created
+- always make sure the code is compiled using the terminal
+- always make sure unit test are created when possible
+- always make sure those test are successfully run using the terminal
