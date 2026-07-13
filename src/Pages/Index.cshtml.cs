@@ -123,6 +123,51 @@ public class IndexModel : PageModel
                 AwayScore = 2,
                 MatchDate = DateTime.Now.AddDays(-1),
                 Competition = "Primeira Liga"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Argentina",
+                AwayTeam = "France",
+                HomeScore = 3,
+                AwayScore = 3,
+                MatchDate = DateTime.Now.AddDays(-7),
+                Competition = "FIFA World Cup"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Morocco",
+                AwayTeam = "Portugal",
+                HomeScore = 1,
+                AwayScore = 0,
+                MatchDate = DateTime.Now.AddDays(-8),
+                Competition = "FIFA World Cup"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Brazil",
+                AwayTeam = "Croatia",
+                HomeScore = 1,
+                AwayScore = 1,
+                MatchDate = DateTime.Now.AddDays(-9),
+                Competition = "FIFA World Cup"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "England",
+                AwayTeam = "Senegal",
+                HomeScore = 3,
+                AwayScore = 0,
+                MatchDate = DateTime.Now.AddDays(-10),
+                Competition = "FIFA World Cup"
+            },
+            new FootballMatch
+            {
+                HomeTeam = "Netherlands",
+                AwayTeam = "United States",
+                HomeScore = 3,
+                AwayScore = 1,
+                MatchDate = DateTime.Now.AddDays(-11),
+                Competition = "FIFA World Cup"
             }
         };
     }
