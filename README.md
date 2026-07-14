@@ -15,7 +15,7 @@ NOTES:
 
 # About
 
-**FootballResultsWeb** is an ASP.NET Core Razor Pages web application that displays football match results from around the world. It showcases a clean, responsive UI built with Bootstrap.
+**FootballResultsWeb** is an ASP.NET Core Razor Pages web application that displays football match results (for teams and countries) from around the world. It showcases a clean, responsive UI built with Bootstrap.
 
 ## Features
 
