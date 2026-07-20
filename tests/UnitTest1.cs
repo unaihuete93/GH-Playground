@@ -132,8 +132,12 @@ public class IndexModelTests
         // Assert
         foreach (var countryGroup in pageModel.MatchesByCountry)
         {
-            var orderedMatches = countryGroup.Matches.OrderByDescending(match => match.MatchDate).ToList();
-            Assert.Equal(orderedMatches, countryGroup.Matches.ToList());
+            for (var index = 0; index < countryGroup.Matches.Count - 1; index++)
+            {
+                Assert.True(
+                    countryGroup.Matches[index].MatchDate >= countryGroup.Matches[index + 1].MatchDate,
+                    $"Matches in {countryGroup.Country} should be ordered from newest to oldest.");
+            }
         }
     }
 }

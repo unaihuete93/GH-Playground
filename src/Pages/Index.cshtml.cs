@@ -8,7 +8,7 @@ namespace FootballResultsWeb.Pages;
 public class IndexModel : PageModel
 {
     public List<FootballMatch> Matches { get; set; } = new();
-    public IReadOnlyList<CountryMatchGroup> MatchesByCountry { get; private set; } = Array.Empty<CountryMatchGroup>();
+    public IReadOnlyList<CountryMatchGroup> MatchesByCountry { get; private set; } = [];
 
     public string DemoOutput { get; private set; } = string.Empty;
 
