@@ -15,11 +15,11 @@
     {
         <section class="mb-5">
             <div class="d-flex align-items-center mb-3">
-                <h2 class="h4 mb-0">@countryGroup.Key</h2>
-                <span class="badge bg-dark ms-2">@countryGroup.Count() matches</span>
+                <h2 class="h4 mb-0">@countryGroup.Country</h2>
+                <span class="badge bg-dark ms-2">@countryGroup.Matches.Count matches</span>
             </div>
             <div class="row">
-                @foreach (var match in countryGroup)
+                @foreach (var match in countryGroup.Matches)
                 {
                     <div class="col-md-6 mb-4">
                         <div class="card shadow-sm">

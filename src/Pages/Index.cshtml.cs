@@ -8,7 +8,7 @@ namespace FootballResultsWeb.Pages;
 public class IndexModel : PageModel
 {
     public List<FootballMatch> Matches { get; set; } = new();
-    public IReadOnlyList<IGrouping<string, FootballMatch>> MatchesByCountry { get; private set; } = Array.Empty<IGrouping<string, FootballMatch>>();
+    public IReadOnlyList<CountryMatchGroup> MatchesByCountry { get; private set; } = Array.Empty<CountryMatchGroup>();
 
     public string DemoOutput { get; private set; } = string.Empty;
 
@@ -190,9 +190,11 @@ public class IndexModel : PageModel
         };
 
         MatchesByCountry = Matches
-            .OrderBy(match => match.Country)
-            .ThenByDescending(match => match.MatchDate)
             .GroupBy(match => match.Country)
+            .OrderBy(group => group.Key)
+            .Select(group => new CountryMatchGroup(
+                group.Key,
+                group.OrderByDescending(match => match.MatchDate).ToList()))
             .ToList();
     }
 
@@ -215,3 +217,5 @@ public class IndexModel : PageModel
         return Page();
     }
 }
+
+public sealed record CountryMatchGroup(string Country, IReadOnlyList<FootballMatch> Matches);

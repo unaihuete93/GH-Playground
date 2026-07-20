@@ -116,8 +116,8 @@ public class IndexModelTests
 
         // Assert
         Assert.NotEmpty(pageModel.MatchesByCountry);
-        Assert.Equal(pageModel.Matches.Count, pageModel.MatchesByCountry.Sum(group => group.Count()));
-        Assert.All(pageModel.MatchesByCountry, group => Assert.All(group, match => Assert.Equal(group.Key, match.Country)));
+        Assert.Equal(pageModel.Matches.Count, pageModel.MatchesByCountry.Sum(group => group.Matches.Count));
+        Assert.All(pageModel.MatchesByCountry, group => Assert.All(group.Matches, match => Assert.Equal(group.Country, match.Country)));
     }
 
     [Fact]
@@ -132,8 +132,8 @@ public class IndexModelTests
         // Assert
         foreach (var countryGroup in pageModel.MatchesByCountry)
         {
-            var orderedMatches = countryGroup.OrderByDescending(match => match.MatchDate).ToList();
-            Assert.Equal(orderedMatches, countryGroup.ToList());
+            var orderedMatches = countryGroup.Matches.OrderByDescending(match => match.MatchDate).ToList();
+            Assert.Equal(orderedMatches, countryGroup.Matches.ToList());
         }
     }
 }
