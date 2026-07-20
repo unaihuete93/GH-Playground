@@ -1,24 +1,17 @@
-﻿@page
-@model IndexModel
+@page "/Competition/{competition?}"
+@model CompetitionModel
 @{
-    ViewData["Title"] = "Football Match Results";
+    ViewData["Title"] = $"{Model.CompetitionName} Results";
 }
 
 <div class="container mt-4">
     <div class="text-center mb-4">
-        <h1 class="display-4">⚽ Football Match Results</h1>
-        <p class="lead">Latest game scores from around the world</p>
+        <h1 class="display-4">⚽ @Model.CompetitionName</h1>
+        <p class="lead">Latest results for @Model.CompetitionName</p>
     </div>
 
-    <div class="text-center mb-4">
-        <div class="d-flex flex-wrap justify-content-center gap-2">
-            @foreach (var competition in Model.CompetitionNames)
-            {
-                <a class="btn btn-outline-primary" asp-page="/Competition" asp-route-competition="@FootballResultsWeb.Models.FootballMatchData.GetCompetitionSlug(competition)">
-                    @competition
-                </a>
-            }
-        </div>
+    <div class="mb-4">
+        <a class="btn btn-outline-primary" asp-page="/Index">Back to all competitions</a>
     </div>
 
     <div class="row">
@@ -62,4 +55,3 @@
         }
     </div>
 </div>
-
