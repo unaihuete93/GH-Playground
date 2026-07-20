@@ -48,6 +48,7 @@ public class IndexModelTests
         // Assert
         foreach (var match in pageModel.Matches)
         {
+            Assert.NotEmpty(match.Country);
             Assert.NotEmpty(match.HomeTeam);
             Assert.NotEmpty(match.AwayTeam);
             Assert.NotEmpty(match.Competition);
@@ -101,6 +102,38 @@ public class IndexModelTests
         {
             Assert.True(match.HomeScore >= 0, "Home score should be non-negative");
             Assert.True(match.AwayScore >= 0, "Away score should be non-negative");
+        }
+    }
+
+    [Fact]
+    public void OnGet_OrganizesMatchesByCountry()
+    {
+        // Arrange
+        var pageModel = new IndexModel();
+
+        // Act
+        pageModel.OnGet();
+
+        // Assert
+        Assert.NotEmpty(pageModel.MatchesByCountry);
+        Assert.Equal(pageModel.Matches.Count, pageModel.MatchesByCountry.Sum(group => group.Count()));
+        Assert.All(pageModel.MatchesByCountry, group => Assert.All(group, match => Assert.Equal(group.Key, match.Country)));
+    }
+
+    [Fact]
+    public void OnGet_OrdersMatchesByDateInsideEachCountryGroup()
+    {
+        // Arrange
+        var pageModel = new IndexModel();
+
+        // Act
+        pageModel.OnGet();
+
+        // Assert
+        foreach (var countryGroup in pageModel.MatchesByCountry)
+        {
+            var orderedMatches = countryGroup.OrderByDescending(match => match.MatchDate).ToList();
+            Assert.Equal(orderedMatches, countryGroup.ToList());
         }
     }
 }
