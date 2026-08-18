@@ -1,0 +1,93 @@
+name: Football Results Web - CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["Football Results Web - CI Pipeline"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      app_name:
+        description: 'Azure Web App name'
+        required: true
+        type: string
+      resource_group:
+        description: 'Azure resource group name'
+        required: true
+        type: string
+      location:
+        description: 'Azure region for the deployment'
+        required: false
+        default: 'eastus'
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment: production
+
+    env:
+      AZURE_LOCATION: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.location || vars.AZURE_LOCATION || 'eastus' }}
+      AZURE_RESOURCE_GROUP: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.resource_group || vars.AZURE_RESOURCE_GROUP || 'football-results-rg' }}
+      AZURE_WEBAPP_NAME: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.app_name || secrets.AZURE_WEBAPP_NAME || 'footballresultsweb-demo' }}
+
+    steps:
+
+      - name: Download published artifact from CI workflow
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: football-results-web-${{ github.event.workflow_run.head_sha }}
+          path: ./publish
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Validate published app package
+        run: |
+          ls -la ./publish
+          test -f ./publish/FootballResultsWeb.dll
+
+      - name: Azure login with OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Create or update Azure resource group
+        run: |
+          az group create \
+            --name "$AZURE_RESOURCE_GROUP" \
+            --location "$AZURE_LOCATION"
+
+      - name: Deploy Azure infrastructure with Bicep
+        uses: azure/arm-deploy@v2
+        with:
+          scope: resourcegroup
+          resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP }}
+          template: ./infra/main.bicep
+          parameters: >
+            appName=${{ env.AZURE_WEBAPP_NAME }}
+            location=${{ env.AZURE_LOCATION }}
+            skuName=B1
+            skuCapacity=1
+            linuxFxVersion=DOTNETCORE|10.0
+
+      - name: Deploy app package to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          package: ./publish
+
+      - name: Show app URL
+        run: |
+          echo "Web app deployed: https://${AZURE_WEBAPP_NAME}.azurewebsites.net"
