@@ -1,3 +1,4 @@
+# written by Copilot - Custom instructions applied
 name: Football Results Web - CD Pipeline
 
 on:
@@ -24,6 +25,7 @@ on:
 permissions:
   contents: read
   id-token: write
+  actions: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -31,6 +33,7 @@ concurrency:
 
 jobs:
   deploy:
+    name: Deploy to Azure
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment: production
@@ -41,6 +44,10 @@ jobs:
       AZURE_WEBAPP_NAME: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.app_name || secrets.AZURE_WEBAPP_NAME || 'footballresultsweb-demo' }}
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.head_sha }}
 
       - name: Download published artifact from CI workflow
         if: ${{ github.event_name != 'workflow_dispatch' }}
@@ -50,6 +57,16 @@ jobs:
           path: ./publish
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Setup .NET
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish application for manual run
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: dotnet publish src/FootballResultsWeb.csproj --configuration Release --output ./publish
 
       - name: Validate published app package
         run: |
