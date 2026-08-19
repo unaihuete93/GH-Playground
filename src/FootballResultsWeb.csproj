@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="jQuery" Version="3.5.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="4.7.2" />
+    <PackageReference Include="jQuery" Version="3.7.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="10.0.11" />
     <PackageReference Include="jQuery.UI.Combined" Version="1.5.0" />
   </ItemGroup>
 
