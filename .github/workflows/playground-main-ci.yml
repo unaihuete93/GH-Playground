@@ -88,6 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
       security-events: write
       actions: read
       pull-requests: write
@@ -95,6 +96,50 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Scan Bicep with Microsoft Security DevOps
+        id: msdo-iac
+        uses: microsoft/security-devops-action@v1
+        with:
+          categories: 'IaC'
+          tools: templateanalyzer
+
+      - name: Publish Bicep scan summary
+        if: always() && steps.msdo-iac.outputs.sarifFile != ''
+        env:
+          SARIF_FILE: ${{ steps.msdo-iac.outputs.sarifFile }}
+        run: |
+          if [[ ! -f "$SARIF_FILE" ]]; then
+            echo "## Bicep IaC scan" >> "$GITHUB_STEP_SUMMARY"
+            echo "The scan did not produce a SARIF report." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          total=$(jq '[.runs[].results[]?] | length' "$SARIF_FILE")
+          errors=$(jq '[.runs[].results[]? | select(.level == "error")] | length' "$SARIF_FILE")
+          warnings=$(jq '[.runs[].results[]? | select(.level == "warning")] | length' "$SARIF_FILE")
+          notes=$(jq '[.runs[].results[]? | select(.level == "note")] | length' "$SARIF_FILE")
+
+          {
+            echo "## Bicep IaC scan"
+            if [[ "$total" -eq 0 ]]; then
+              echo "No infrastructure-as-code findings were detected."
+            else
+              echo "Microsoft Security DevOps detected **$total** finding(s)."
+              echo ""
+              echo "| Severity | Findings |"
+              echo "|---|---:|"
+              echo "| Error | $errors |"
+              echo "| Warning | $warnings |"
+              echo "| Note | $notes |"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Bicep scan results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.msdo-iac.outputs.sarifFile }}
+          category: msdo-bicep
           
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
