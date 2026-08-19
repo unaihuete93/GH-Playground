@@ -47,6 +47,19 @@ NOTES:
 └── README.md
 ```
 
+## Dependabot Demo
+
+This repository intentionally includes older, known-vulnerable NuGet package versions so customers can see GitHub Dependabot alerts and version updates in action.
+
+The demo dependencies are intentionally pinned to vulnerable releases:
+
+- `Newtonsoft.Json` 12.0.1
+- `System.Text.Encodings.Web` 4.7.1
+- `System.Text.Json` 4.0.0
+- `Microsoft.AspNetCore.Http.Extensions` 2.2.0
+
+These references are meant for demonstration and should not be used in a production application without updating to a patched version.
+
 ## Getting Started
 
 ### Prerequisites
