@@ -55,8 +55,9 @@ The demo dependencies are intentionally pinned to vulnerable releases:
 
 - `Newtonsoft.Json` 12.0.1
 - `System.Text.Encodings.Web` 4.7.1
-- `System.Text.Json` 4.0.0
-- `Microsoft.AspNetCore.Http.Extensions` 2.2.0
+- `System.Security.Cryptography.Xml` 10.0.5
+- `Magick.NET-Q16-AnyCPU` 14.14.0
+- `SSH.NET` 2025.1.0
 
 These references are meant for demonstration and should not be used in a production application without updating to a patched version.
 
