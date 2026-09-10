@@ -25,4 +25,17 @@ public class DemoVulnerableControllerTests
         // Assert
         Assert.IsType<BadRequestObjectResult>(result);
     }
+
+    [Fact]
+    public void RunCommand_RejectsNullCommand()
+    {
+        // Arrange
+        var controller = new DemoVulnerableController();
+
+        // Act
+        var result = controller.RunCommand(null!);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
 }
