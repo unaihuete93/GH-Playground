@@ -27,6 +27,9 @@ jobs:
       version: ${{ steps.build-info.outputs.version }}
     
     steps:
+      - name: Output Hello World
+        run: echo "Hello World"
+
       - name: Checkout code
         uses: actions/checkout@v4
       
