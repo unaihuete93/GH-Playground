@@ -3,6 +3,7 @@ name: plan-expert
 description: "Use when you need implementation planning, task breakdown, architecture decisions, and a build plan before coding."
 tools: [read, search, todo, agent]
 agents: [code-expert]
+model: [MAI-Code-1.1-Flash]
 user-invocable: true
 handoffs:
   - label: "Start Coding"
