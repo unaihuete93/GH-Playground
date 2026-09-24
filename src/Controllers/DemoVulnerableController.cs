@@ -22,10 +22,28 @@ public class DemoVulnerableController : ControllerBase
         return Content(content, "text/plain");
     }
 
+    // written by Copilot
+    /// <summary>
+    /// Commands that are allowed to be executed, mapped from a caller-supplied key
+    /// to a hard-coded command line. This prevents command line injection.
+    /// </summary>
+    private static readonly IReadOnlyDictionary<string, (string FileName, string Arguments)> AllowedCommands =
+        new Dictionary<string, (string FileName, string Arguments)>(StringComparer.Ordinal)
+        {
+            ["date"] = ("/bin/date", string.Empty),
+            ["uptime"] = ("/usr/bin/uptime", string.Empty),
+            ["whoami"] = ("/usr/bin/whoami", string.Empty)
+        };
+
     [HttpGet("run-command")]
     public IActionResult RunCommand([FromQuery] string command)
     {
-        Process.Start("/bin/bash", "-c " + command);
+        if (command is null || !AllowedCommands.TryGetValue(command, out var allowed))
+        {
+            return BadRequest("Unsupported command");
+        }
+
+        Process.Start(allowed.FileName, allowed.Arguments);
         return Ok("Executed");
     }
 
