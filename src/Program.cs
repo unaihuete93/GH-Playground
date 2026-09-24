@@ -15,7 +15,11 @@ var cosmosDbOptions = builder.Configuration.GetSection(CosmosDbOptions.SectionNa
 
 if (!string.IsNullOrWhiteSpace(cosmosDbOptions.ConnectionString))
 {
-    builder.Services.AddSingleton(new CosmosClient(cosmosDbOptions.ConnectionString));
+    var cosmosClientOptions = new CosmosClientOptions
+    {
+        UseSystemTextJsonSerializerWithOptions = new System.Text.Json.JsonSerializerOptions()
+    };
+    builder.Services.AddSingleton(new CosmosClient(cosmosDbOptions.ConnectionString, cosmosClientOptions));
     builder.Services.AddSingleton<IFootballMatchRepository, CosmosDbFootballMatchRepository>();
 }
 else
