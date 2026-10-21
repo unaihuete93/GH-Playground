@@ -3,6 +3,7 @@ name: code-expert
 description: "Use when you need implementation of an approved plan, including file edits and code changes based on requirements."
 tools: [read, search, edit, execute, agent]
 agents: [test-expert]
+model: GPT-6.1 Sol (copilot)
 user-invocable: true
 handoffs:
   - label: "Run Validation"

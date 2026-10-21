@@ -4,5 +4,7 @@
         "GH-Playground/.vscode/mcp.json: com.microsoft/azure": {
             "allowedDuringChat": true
         }
-    }
+    },
+    "chat.defaultToCopilotHarness": false,
+    "github.copilot.chat.exploreAgent.enabled": false
 }
