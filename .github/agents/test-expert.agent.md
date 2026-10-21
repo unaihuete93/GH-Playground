@@ -3,6 +3,7 @@ name: test-expert
 description: "Use when you need test strategy, test implementation, execution, and validation of recent code changes."
 tools: [read, search, edit, execute]
 agents: []
+model: Claude Haiku 5.5 (copilot)
 user-invocable: true
 disable-model-invocation: false
 ---
