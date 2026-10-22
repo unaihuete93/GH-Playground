@@ -2,6 +2,7 @@ namespace FootballResultsWeb.Models;
 
 public class FootballMatch
 {
+    public string Country { get; set; } = string.Empty;
     public string HomeTeam { get; set; } = string.Empty;
     public string AwayTeam { get; set; } = string.Empty;
     public int HomeScore { get; set; }
