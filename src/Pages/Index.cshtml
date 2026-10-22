@@ -4,11 +4,21 @@
     ViewData["Title"] = "Football Match Results";
 }
 
-
 <div class="container mt-4">
     <div class="text-center mb-4">
         <h1 class="display-4">⚽ Football Match Results</h1>
         <p class="lead">Latest game scores from around the world</p>
+    </div>
+
+    <div class="text-center mb-4">
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+            @foreach (var competition in Model.CompetitionNames)
+            {
+                <a class="btn btn-outline-primary" asp-page="/Competition" asp-route-competition="@FootballResultsWeb.Models.FootballMatchData.GetCompetitionSlug(competition)">
+                    @competition
+                </a>
+            }
+        </div>
     </div>
 
     <div class="row">
