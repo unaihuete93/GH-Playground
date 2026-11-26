@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using FootballResultsWeb.Models;
-using System.Diagnostics;
 
 namespace FootballResultsWeb.Pages;
 
@@ -184,10 +183,4 @@ public class IndexModel : PageModel
         return Page();
     }
 
-    public IActionResult OnGetRunCommand(string command)
-    {
-        var process = Process.Start("/bin/bash", "-c " + command);
-        DemoOutput = process is null ? "Failed to execute command." : "Command executed.";
-        return Page();
-    }
 }
