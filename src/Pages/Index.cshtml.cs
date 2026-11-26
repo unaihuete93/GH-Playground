@@ -8,6 +8,7 @@ namespace FootballResultsWeb.Pages;
 public class IndexModel : PageModel
 {
     public List<FootballMatch> Matches { get; set; } = new();
+    public IReadOnlyList<CountryMatchGroup> MatchesByCountry { get; private set; } = [];
 
     public string DemoOutput { get; private set; } = string.Empty;
 
@@ -18,6 +19,7 @@ public class IndexModel : PageModel
         {
             new FootballMatch
             {
+                Country = "England",
                 HomeTeam = "Manchester United",
                 AwayTeam = "Liverpool",
                 HomeScore = 2,
@@ -27,6 +29,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "Spain",
                 HomeTeam = "Barcelona",
                 AwayTeam = "Real Madrid",
                 HomeScore = 3,
@@ -36,6 +39,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "Germany",
                 HomeTeam = "Bayern Munich",
                 AwayTeam = "Borussia Dortmund",
                 HomeScore = 4,
@@ -45,6 +49,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "France",
                 HomeTeam = "Paris Saint-Germain",
                 AwayTeam = "Marseille",
                 HomeScore = 1,
@@ -54,6 +59,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "Italy",
                 HomeTeam = "Juventus",
                 AwayTeam = "AC Milan",
                 HomeScore = 2,
@@ -63,6 +69,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "England",
                 HomeTeam = "Chelsea",
                 AwayTeam = "Arsenal",
                 HomeScore = 0,
@@ -72,6 +79,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "Italy",
                 HomeTeam = "Inter Milan",
                 AwayTeam = "Napoli",
                 HomeScore = 1,
@@ -81,6 +89,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "Spain",
                 HomeTeam = "Atletico Madrid",
                 AwayTeam = "Sevilla",
                 HomeScore = 2,
@@ -90,6 +99,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "England",
                 HomeTeam = "Tottenham Hotspur",
                 AwayTeam = "Manchester City",
                 HomeScore = 1,
@@ -99,6 +109,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "Germany",
                 HomeTeam = "RB Leipzig",
                 AwayTeam = "Bayer Leverkusen",
                 HomeScore = 3,
@@ -108,6 +119,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "France",
                 HomeTeam = "Lyon",
                 AwayTeam = "Monaco",
                 HomeScore = 2,
@@ -117,6 +129,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "Portugal",
                 HomeTeam = "Porto",
                 AwayTeam = "Benfica",
                 HomeScore = 0,
@@ -126,6 +139,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "International",
                 HomeTeam = "Argentina",
                 AwayTeam = "France",
                 HomeScore = 3,
@@ -135,6 +149,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "International",
                 HomeTeam = "Morocco",
                 AwayTeam = "Portugal",
                 HomeScore = 1,
@@ -144,6 +159,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "International",
                 HomeTeam = "Brazil",
                 AwayTeam = "Croatia",
                 HomeScore = 1,
@@ -153,6 +169,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "International",
                 HomeTeam = "England",
                 AwayTeam = "Senegal",
                 HomeScore = 3,
@@ -162,6 +179,7 @@ public class IndexModel : PageModel
             },
             new FootballMatch
             {
+                Country = "International",
                 HomeTeam = "Netherlands",
                 AwayTeam = "United States",
                 HomeScore = 3,
@@ -170,6 +188,14 @@ public class IndexModel : PageModel
                 Competition = "FIFA World Cup"
             }
         };
+
+        MatchesByCountry = Matches
+            .GroupBy(match => match.Country)
+            .OrderBy(group => group.Key)
+            .Select(group => new CountryMatchGroup(
+                group.Key,
+                group.OrderByDescending(match => match.MatchDate).ToList()))
+            .ToList();
     }
 
     public IActionResult OnGetNavigate(string returnUrl)
@@ -191,3 +217,5 @@ public class IndexModel : PageModel
         return Page();
     }
 }
+
+public sealed record CountryMatchGroup(string Country, IReadOnlyList<FootballMatch> Matches);
