@@ -7,7 +7,11 @@
 	"features": {
 		"ghcr.io/devcontainers/features/azure-cli:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {},
-		"ghcr.io/devcontainers/features/copilot-cli:1": {}
+		"ghcr.io/devcontainers/features/copilot-cli:1": {},
+		"ghcr.io/va-h/devcontainers-features/uv:1": {}
+	},
+	"remoteEnv": {
+		"PATH": "${containerEnv:PATH}:${containerEnv:HOME}/.local/bin"
 	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
@@ -22,7 +26,7 @@
 	// }
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "bash -lc 'set -euo pipefail; if ! command -v gh >/dev/null 2>&1; then echo \"GitHub CLI (gh) is required but not installed\" >&2; exit 1; fi; if ! gh extension list | grep -q \"github/gh-codeql\"; then gh extension install github/gh-codeql; else gh extension upgrade github/gh-codeql || true; fi; if ! gh extension list | grep -q \"github/gh-aw\"; then gh extension install github/gh-aw; else gh extension upgrade github/gh-aw || true; fi; if ! grep -q \"alias codeql=\\\"gh codeql\\\"\" \"$HOME/.bashrc\"; then echo \"\" >> \"$HOME/.bashrc\"; echo \"# Added by devcontainer: CodeQL via GitHub CLI\" >> \"$HOME/.bashrc\"; echo \"alias codeql=\\\"gh codeql\\\"\" >> \"$HOME/.bashrc\"; fi; dotnet restore'",
+	"postCreateCommand": "bash -lc 'set -euo pipefail; if ! command -v gh >/dev/null 2>&1; then echo \"GitHub CLI (gh) is required but not installed\" >&2; exit 1; fi; if ! gh extension list | grep -q \"github/gh-codeql\"; then gh extension install github/gh-codeql; else gh extension upgrade github/gh-codeql || true; fi; if ! gh extension list | grep -q \"github/gh-aw\"; then gh extension install github/gh-aw; else gh extension upgrade github/gh-aw || true; fi; if ! grep -q \"alias codeql=\\\"gh codeql\\\"\" \"$HOME/.bashrc\"; then echo \"\" >> \"$HOME/.bashrc\"; echo \"# Added by devcontainer: CodeQL via GitHub CLI\" >> \"$HOME/.bashrc\"; echo \"alias codeql=\\\"gh codeql\\\"\" >> \"$HOME/.bashrc\"; fi; uv tool install specify-cli --python 3.12 --from git+https://github.com/github/spec-kit.git@v1.4.5; dotnet restore'",
 	"customizations": {
 		"vscode": {
 			"extensions": [
