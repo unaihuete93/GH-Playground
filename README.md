@@ -84,3 +84,30 @@ dotnet run
 
 The app will be available at `https://localhost:5001` or `http://localhost:5000`.
 
+## Using Spec Kit
+
+[GitHub Spec Kit](https://github.com/github/spec-kit) supports specification-driven development: define what to build, create a plan, then implement it with GitHub Copilot.
+
+### Set Up
+
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and ensure Git and Python 3.11+ are available. From the repository root, run:
+
+```bash
+uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
+specify init --here --ai copilot
+```
+
+Review any changes to existing files before committing. Open the repository in VS Code with GitHub Copilot enabled, then use the generated slash commands in Copilot Chat.
+
+### Workflow
+
+1. `/speckit.constitution` — Define project principles, such as accessibility, testing, and maintainability.
+2. `/speckit.specify` — Describe a feature and its expected behavior, for example: “Allow users to filter football results by competition and date.”
+3. `/speckit.clarify` — Resolve ambiguities in the specification before planning.
+4. `/speckit.plan` — Create an implementation plan using .NET 10, ASP.NET Core Razor Pages, and Bootstrap.
+5. `/speckit.tasks` — Break the plan into actionable tasks.
+6. `/speckit.analyze` — Check consistency across the specification, plan, and tasks.
+7. `/speckit.implement` — Implement the tasks, then review the changes and run builds and tests.
+
+Spec Kit stores project principles in `.specify/` and feature specifications, plans, and tasks in `specs/`. Commit these artifacts alongside the implementation to keep requirements and code aligned.
+
