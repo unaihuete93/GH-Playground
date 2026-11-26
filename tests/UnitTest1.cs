@@ -1,5 +1,6 @@
 ﻿using FootballResultsWeb.Pages;
 using FootballResultsWeb.Models;
+using FootballResultsWeb.Services;
 
 namespace FootballResultsWeb.Tests;
 
@@ -9,14 +10,17 @@ namespace FootballResultsWeb.Tests;
 /// </summary>
 public class IndexModelTests
 {
+    private static IndexModel CreatePageModel() =>
+        new(new InMemoryFootballMatchRepository());
+
     [Fact]
-    public void OnGet_PopulatesMatchesList()
+    public async Task OnGet_PopulatesMatchesList()
     {
         // Arrange
-        var pageModel = new IndexModel();
+        var pageModel = CreatePageModel();
 
         // Act
-        pageModel.OnGet();
+        await pageModel.OnGetAsync();
 
         // Assert
         Assert.NotNull(pageModel.Matches);
@@ -24,26 +28,26 @@ public class IndexModelTests
     }
 
     [Fact]
-    public void OnGet_ReturnsCorrectNumberOfMatches()
+    public async Task OnGet_ReturnsCorrectNumberOfMatches()
     {
         // Arrange
-        var pageModel = new IndexModel();
+        var pageModel = CreatePageModel();
 
         // Act
-        pageModel.OnGet();
+        await pageModel.OnGetAsync();
 
         // Assert
         Assert.Equal(17, pageModel.Matches.Count);
     }
 
     [Fact]
-    public void OnGet_AllMatchesHaveRequiredProperties()
+    public async Task OnGet_AllMatchesHaveRequiredProperties()
     {
         // Arrange
-        var pageModel = new IndexModel();
+        var pageModel = CreatePageModel();
 
         // Act
-        pageModel.OnGet();
+        await pageModel.OnGetAsync();
 
         // Assert
         foreach (var match in pageModel.Matches)
@@ -58,13 +62,13 @@ public class IndexModelTests
     }
 
     [Fact]
-    public void OnGet_MatchDatesAreInThePast()
+    public async Task OnGet_MatchDatesAreInThePast()
     {
         // Arrange
-        var pageModel = new IndexModel();
+        var pageModel = CreatePageModel();
 
         // Act
-        pageModel.OnGet();
+        await pageModel.OnGetAsync();
 
         // Assert
         foreach (var match in pageModel.Matches)
@@ -74,13 +78,13 @@ public class IndexModelTests
     }
 
     [Fact]
-    public void OnGet_ContainsPremierLeagueMatches()
+    public async Task OnGet_ContainsPremierLeagueMatches()
     {
         // Arrange
-        var pageModel = new IndexModel();
+        var pageModel = CreatePageModel();
 
         // Act
-        pageModel.OnGet();
+        await pageModel.OnGetAsync();
 
         // Assert
         var premierLeagueMatches = pageModel.Matches.Where(m => m.Competition == "Premier League").ToList();
@@ -88,13 +92,13 @@ public class IndexModelTests
     }
 
     [Fact]
-    public void OnGet_MatchScoresAreNonNegative()
+    public async Task OnGet_MatchScoresAreNonNegative()
     {
         // Arrange
-        var pageModel = new IndexModel();
+        var pageModel = CreatePageModel();
 
         // Act
-        pageModel.OnGet();
+        await pageModel.OnGetAsync();
 
         // Assert
         foreach (var match in pageModel.Matches)
